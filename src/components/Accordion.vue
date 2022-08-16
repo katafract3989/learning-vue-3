@@ -1,0 +1,66 @@
+<template>
+  <div class="accordion">
+    <div class="accordion__body" :class="!isShow ? 'hidden' : ''">
+      <slot />
+    </div>
+    <div class="accordion__footer" @click="toggleAccordion">
+      <span class="accordion-button">{{ isShow ? "Свернуть" : title }}</span>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { ref } from "vue";
+export default {
+  name: "Accordion",
+
+  props: ["title"],
+
+  setup(): Record<string, any> {
+    let isShow = ref(false);
+    const toggleAccordion = (): void => {
+      isShow.value = !isShow.value;
+    };
+
+    return {
+      isShow,
+      toggleAccordion,
+    };
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.accordion {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 35px;
+  width: 100%;
+
+  &__footer {
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 10px;
+    margin-left: 5px;
+  }
+
+  &__body {
+    // overflow: hidden;
+    padding-left: 5px;
+  }
+}
+
+.accordion-button {
+  background: deepskyblue;
+  color: white;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.hidden {
+  display: none;
+}
+</style>
