@@ -2,9 +2,7 @@
   <div class="table">
     <div class="table__head">
       <div class="row">
-        <div class="col">
-          ID
-        </div>
+        <div class="col">#</div>
         <div
           class="col"
           v-for="(col, indexTable) in options.cols"

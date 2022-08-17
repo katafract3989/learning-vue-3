@@ -1,7 +1,17 @@
 <template>
   <div class="container">
     <div class="reports">
-      <h1>Ваши отчёты</h1>
+      <div class="reports__header">
+        <h1>Ваши отчёты</h1>
+        <router-link to="/settings-report">
+          <img
+            class="settings-icon"
+            src="@/assets/icon/svg/options.svg"
+            alt=""
+          />
+        </router-link>
+      </div>
+
       <div class="report-table">
         <reports-table :reports="reports" :options="tableOptions" />
       </div>
@@ -112,6 +122,10 @@ export default {
           title: "Статус отчёта",
           name: "status",
         },
+        {
+          title: "Статус отчёта",
+          name: "status",
+        },
       ],
     };
 
@@ -125,5 +139,20 @@ export default {
 
 <style lang="scss" scoped>
 .reports {
+  &__header {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.settings-icon {
+  margin-left: 10px;
+  width: 26px;
+  opacity: 0.5;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 </style>
