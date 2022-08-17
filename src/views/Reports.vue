@@ -122,10 +122,6 @@ export default {
           title: "Статус отчёта",
           name: "status",
         },
-        {
-          title: "Статус отчёта",
-          name: "status",
-        },
       ],
     };
 

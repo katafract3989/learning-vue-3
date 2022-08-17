@@ -1,7 +1,14 @@
 <template>
   <div class="custom-input">
-    <span class="custom-input__label">{{ label }}</span>
-    <input class="custom-input__input" type="text" :value="value" @input="$emit('change-input', $event.target.value)"/>
+    <span class="custom-input__label" :style="{ color: color }">{{
+      label
+    }}</span>
+    <input
+      class="custom-input__input"
+      type="text"
+      :value="value"
+      @input="$emit('change-input', $event.target.value)"
+    />
   </div>
 </template>
 
@@ -17,6 +24,11 @@ export default {
       type: String,
       default: "",
     },
+
+    color: {
+      type: String,
+      default: "black",
+    },
   },
 
   setup(props: { value: string }): Record<string, any> {
@@ -30,7 +42,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
 
   &__label {
     font-size: 14px;

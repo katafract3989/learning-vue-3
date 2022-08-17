@@ -1,7 +1,10 @@
 <template>
+  <h2 v-if="cols.length === 0">Добавьте новые поля для вашей таблицы</h2>
   <div class="config-table">
-    <div class="config-table__cols" v-for="(col, index) in cols" :key="index">
+    <div class="config-table__cols">
       <col-field
+        v-for="(col, index) in cols"
+        :key="index"
         :col="col"
         :index="index + 1"
         @delete-col="deleteCol"
@@ -10,15 +13,14 @@
       />
     </div>
 
-<!--    <div class="preview-table">-->
-
-<!--      <h2>Превью таблицы</h2>-->
-
-<!--    </div>-->
+    <div class="preview-table" v-if="cols.length > 0">
+      <table-preview :cols="cols" />
+    </div>
 
     <div class="config-table__add-button">
       <custom-button text="Добавить поле" @click="addCol" />
     </div>
+    <custom-button text="Сохранить таблицу" />
   </div>
 </template>
 
@@ -29,11 +31,14 @@ const _ = require("lodash");
 import ColField from "@/components/settings-table/ColField.vue";
 import CustomButton from "@/components/ui/CustomButton.vue";
 import TableCol from "@/domain/models/TableCol";
+import TablePreview from "@/components/settings-table/TablePreview.vue";
+
 export default {
   name: "ConfigurationTable",
   components: {
     ColField,
     CustomButton,
+    TablePreview,
   },
 
   setup(): Record<string, any> {
@@ -43,16 +48,25 @@ export default {
         title: "Название",
         name: "title",
       },
+      {
+        id: 2,
+        title: "Описание",
+        name: "description",
+      },
+      {
+        id: 3,
+        title: "Статус отчёта",
+        name: "status",
+      },
     ]);
 
     const addCol = () => {
       const col = {
         id: _.uniqueId("new_col_"),
         title: "Новое поле",
-        name: "",
+        name: _.uniqueId("col_name_"),
       };
       cols.value.push(col);
-      console.log(cols.value[0]);
     };
 
     const changeColTitle = (id: string | number, title: string): void => {
@@ -88,11 +102,12 @@ export default {
 
 <style lang="scss" scoped>
 .config-table {
-  //display: flex;
-  //flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 
   &__cols {
-
+    display: flex;
+    flex-direction: column !important;
     margin-bottom: 10px;
   }
 
@@ -103,8 +118,6 @@ export default {
 }
 
 .preview-table {
-  min-width: 444px;
-  margin-left: 50px;
-  border: 1px solid grey;
+  margin-left: 10px;
 }
 </style>

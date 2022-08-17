@@ -5,7 +5,7 @@
         <span>Колонка №{{ index }}.</span>
       </div>
       <div @click="deleteCol(col.id)">
-        <img class="delete-icon" src="@/assets/icon/svg/trash.svg" alt="" />
+        <img class="delete-icon" src="@/assets/icon/svg/close.svg" alt="" />
       </div>
     </div>
     <div class="col-field__body">
@@ -14,12 +14,14 @@
           label="Название колонки"
           @change-input="onInputTitle"
           :value="col.title"
+          color="white"
         />
       </div>
       <div class="col-field-input">
         <custom-input
           label="Имя поля"
           :value="col.name"
+          color="white"
           @change-input="onInputName"
         />
       </div>
@@ -80,6 +82,7 @@ export default {
   animation: delayShow 0.2s;
   overflow: hidden;
   background: deepskyblue;
+  margin-bottom: 10px;
 
   &__body {
     display: flex;
@@ -90,6 +93,7 @@ export default {
     margin-bottom: 10px;
     justify-content: space-between;
     width: 100%;
+    color: white;
   }
 }
 
