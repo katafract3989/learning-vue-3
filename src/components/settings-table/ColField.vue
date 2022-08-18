@@ -4,7 +4,7 @@
       <div>
         <span>Колонка №{{ index }}.</span>
       </div>
-      <div @click="deleteCol(col.id)">
+      <div @click="$emit('delete-col', col.id)">
         <img class="delete-icon" src="@/assets/icon/svg/close.svg" alt="" />
       </div>
     </div>
@@ -30,9 +30,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import CustomInput from "@/components/ui/CustomInput.vue";
 
-export default {
+export default defineComponent({
   name: "ColField",
   components: {
     CustomInput,
@@ -43,35 +44,26 @@ export default {
       type: Object,
       required: true,
     },
+
     index: {
       type: Number,
       required: true,
     },
   },
 
-  setup(
-    props: { col: Record<string, string | number> },
-    context: any
-  ): Record<string, any> {
-    const deleteCol = () => {
-      context.emit("delete-col", props.col.id);
-    };
+  setup(props, { emit }) {
+    const onInputTitle = (title: string) =>
+      emit("change-col-title", props.col.id, title);
 
-    const onInputTitle = (title: string) => {
-      context.emit("change-col-title", props.col.id, title);
-    };
-
-    const onInputName = (name: string) => {
-      context.emit("change-col-name", props.col.id, name);
-    };
+    const onInputName = (name: string) =>
+      emit("change-col-name", props.col.id, name);
 
     return {
-      deleteCol,
       onInputTitle,
       onInputName,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

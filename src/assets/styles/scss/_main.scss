@@ -21,3 +21,11 @@
 .container {
   margin: 0 100px;
 }
+
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}

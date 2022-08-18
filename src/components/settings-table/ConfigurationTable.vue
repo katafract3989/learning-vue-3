@@ -7,9 +7,9 @@
         :key="index"
         :col="col"
         :index="index + 1"
-        @delete-col="deleteCol"
-        @change-col-title="changeColTitle"
-        @change-col-name="changeColName"
+        @delete-col="pinia.deleteCol"
+        @change-col-title="pinia.changeColTitle"
+        @change-col-name="pinia.changeColName"
       />
     </div>
 
@@ -18,86 +18,35 @@
     </div>
 
     <div class="config-table__add-button">
-      <custom-button text="Добавить поле" @click="addCol" />
+      <custom-button text="Добавить поле" @click="pinia.addCol" />
     </div>
-    <custom-button text="Сохранить таблицу" />
   </div>
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const _ = require("lodash");
+import { defineComponent, computed } from "vue";
 import ColField from "@/components/settings-table/ColField.vue";
 import CustomButton from "@/components/ui/CustomButton.vue";
-import TableCol from "@/domain/models/TableCol";
 import TablePreview from "@/components/settings-table/TablePreview.vue";
+import useStore from "@/store";
 
-export default {
+export default defineComponent({
   name: "ConfigurationTable",
+
   components: {
     ColField,
     CustomButton,
     TablePreview,
   },
 
-  setup(): Record<string, any> {
-    let cols = ref([
-      {
-        id: 1,
-        title: "Название",
-        name: "title",
-      },
-      {
-        id: 2,
-        title: "Описание",
-        name: "description",
-      },
-      {
-        id: 3,
-        title: "Статус отчёта",
-        name: "status",
-      },
-    ]);
-
-    const addCol = () => {
-      const col = {
-        id: _.uniqueId("new_col_"),
-        title: "Новое поле",
-        name: _.uniqueId("col_name_"),
-      };
-      cols.value.push(col);
-    };
-
-    const changeColTitle = (id: string | number, title: string): void => {
-      const changeableCol = _.find(
-        cols.value,
-        (col: TableCol) => col.id === id
-      );
-      changeableCol.title = title;
-    };
-
-    const changeColName = (id: string | number, name: string): void => {
-      const changeableCol = _.find(
-        cols.value,
-        (col: TableCol) => col.id === id
-      );
-      changeableCol.name = name;
-    };
-
-    const deleteCol = (id: number | string): void => {
-      cols.value = _.filter(cols.value, (col: TableCol) => col.id !== id);
-    };
-
+  setup() {
+    const pinia = useStore();
     return {
-      addCol,
-      deleteCol,
-      changeColTitle,
-      changeColName,
-      cols,
+      cols: computed(() => pinia.getCols),
+      pinia,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
@@ -106,9 +55,9 @@ export default {
   flex-wrap: wrap;
 
   &__cols {
-    display: flex;
-    flex-direction: column !important;
     margin-bottom: 10px;
+    max-height: 600px;
+    overflow: auto;
   }
 
   &__add-button {

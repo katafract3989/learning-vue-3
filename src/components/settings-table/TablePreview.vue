@@ -4,20 +4,20 @@
       <tr>
         <th v-for="(col, indexCol) in cols" :key="indexCol">{{ col.title }}</th>
       </tr>
-      <!--ряд с ячейками заголовков-->
       <tr>
         <td v-for="(col, indexTd) in cols" :key="indexTd">{{ col.name }}</td>
       </tr>
       <tr v-for="(col, indexTr) in cols" :key="indexTr">
         <td v-for="(col, indexTd) in cols" :key="indexTd"></td>
       </tr>
-      <!--ряд с ячейками тела таблицы-->
     </table>
   </div>
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "TablePreview",
   props: {
     cols: {
@@ -25,7 +25,7 @@ export default {
       required: true,
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -10,32 +10,19 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import ConfigurationTable from "@/components/settings-table/ConfigurationTable.vue";
-export default {
+
+export default defineComponent({
   name: "SettingsReport",
   components: {
     ConfigurationTable,
   },
 
-  setup(): Record<string, any> {
-    const tableCols = [
-      {
-        title: "Название",
-        name: "title",
-      },
-      {
-        title: "Описание",
-        name: "description",
-      },
-      {
-        title: "Статус отчёта",
-        name: "status",
-      },
-    ];
-
+  setup() {
     return {};
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

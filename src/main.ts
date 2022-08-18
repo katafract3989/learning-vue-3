@@ -1,8 +1,8 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
-import "./assets/styles/scss/main.scss";
-import lodash from "vue-lodash";
+// import store from "./store";
+import "@/assets/styles/index.scss";
 
-createApp(App).use(store).use(router).use(lodash).mount("#app");
+import { createPinia } from "pinia";
+createApp(App).use(router).use(createPinia()).mount("#app");

@@ -10,15 +10,20 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
-export default {
+import { defineComponent, ref } from "vue";
+export default defineComponent({
   name: "Accordion",
 
-  props: ["title"],
+  props: {
+    title: {
+      type: String,
+      default: "Развернуть",
+    },
+  },
 
-  setup(): Record<string, any> {
+  setup() {
     let isShow = ref(false);
-    const toggleAccordion = (): void => {
+    const toggleAccordion = () => {
       isShow.value = !isShow.value;
     };
 
@@ -27,7 +32,7 @@ export default {
       toggleAccordion,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
@@ -47,7 +52,6 @@ export default {
   }
 
   &__body {
-    // overflow: hidden;
     padding-left: 5px;
   }
 }

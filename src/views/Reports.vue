@@ -13,21 +13,21 @@
       </div>
 
       <div class="report-table">
-        <reports-table :reports="reports" :options="tableOptions" />
+        <reports-table :reports="reports" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import ReportsTable from "@/components/ReportsTable.vue";
-
-export default {
+export default defineComponent({
   components: {
     ReportsTable,
   },
 
-  setup(): Record<string, any> {
+  setup() {
     const reports = [
       {
         id: 1,
@@ -108,29 +108,11 @@ export default {
       },
     ];
 
-    const tableOptions = {
-      cols: [
-        {
-          title: "Название",
-          name: "title",
-        },
-        {
-          title: "Описание",
-          name: "description",
-        },
-        {
-          title: "Статус отчёта",
-          name: "status",
-        },
-      ],
-    };
-
     return {
       reports,
-      tableOptions,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

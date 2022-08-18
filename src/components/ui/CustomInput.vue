@@ -13,13 +13,16 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "CustomInput",
   props: {
     label: {
       type: String,
       default: "Название поля",
     },
+
     value: {
       type: String,
       default: "",
@@ -30,11 +33,7 @@ export default {
       default: "black",
     },
   },
-
-  setup(props: { value: string }): Record<string, any> {
-    return {};
-  },
-};
+});
 </script>
 
 <style lang="scss" scoped>
@@ -48,6 +47,7 @@ export default {
     font-weight: 600;
     margin-left: 5px;
   }
+
   &__input {
     border: 1px solid rgba(47, 47, 47, 0.56);
     outline: none;

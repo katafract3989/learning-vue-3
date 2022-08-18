@@ -5,10 +5,10 @@
         <div class="col">#</div>
         <div
           class="col"
-          v-for="(col, indexTable) in options.cols"
+          v-for="(title, indexTable) in colsTitles"
           :key="indexTable"
         >
-          {{ col.title }}
+          {{ title }}
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
           :key="index"
           :report="report"
           :index="index + 1"
-          :options="options"
+          :cols="colsNames"
         />
       </div>
     </div>
@@ -27,29 +27,41 @@
 </template>
 
 <script lang="ts">
+import { computed, defineComponent } from "vue";
 import Report from "@/components/Report.vue";
-
-export default {
+import useStore from "@/store";
+export default defineComponent({
   name: "ReportsTable",
   components: {
     Report,
   },
-  props: ["reports", "options"],
-
-  setup(): Record<string, any> {
-    return {};
+  props: {
+    reports: {
+      type: Array,
+      default: () => [],
+    },
   },
-};
+
+  setup() {
+    const pinia = useStore();
+    return {
+      colsTitles: computed(() => pinia.getColsTitles),
+      colsNames: computed(() => pinia.getColsNames),
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
+@import "../assets/styles/scss/_variables.scss";
+
 .table {
   width: 100%;
-  border: 1px solid grey;
+  border: $border-grey;
   padding: 32px;
 
   &__head {
-    border-bottom: 1px solid gray;
+    border-bottom: $border-grey;
     margin-bottom: 20px;
     padding-left: 5px;
     min-width: 100%;

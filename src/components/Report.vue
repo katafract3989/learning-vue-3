@@ -3,10 +3,9 @@
     <div class="report">
       <div class="row">
         <div class="col">{{ reportIndex }}</div>
-
         <div
-          class="col"
-          v-for="(colName, indexColTable) in reportCols"
+          class="col truncate"
+          v-for="(colName, indexColTable) in cols"
           :key="indexColTable"
         >
           {{ report[colName] }}
@@ -24,7 +23,7 @@
           :report="childReport"
           :parentIndex="reportIndex"
           :index="childIndex + 1"
-          :options="options"
+          :cols="cols"
         />
       </accordion>
     </div>
@@ -32,47 +31,64 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, computed } from "vue";
 import Accordion from "@/components/Accordion.vue";
-import TableConfig from "@/domain/models/TableConfig";
-import { computed } from "vue";
 
-export default {
+export default defineComponent({
   name: "Report",
-  props: ["report", "index", "parentIndex", "options"],
+
   components: {
     Accordion,
   },
-  setup(props: {
-    options: TableConfig;
-    index: number | string;
-    parentIndex: number | string;
-  }): Record<string, any> {
-    const reportCols = props.options.cols.map((col) => col.name);
 
+  props: {
+    report: {
+      type: Object,
+      required: true,
+    },
+
+    cols: {
+      type: Array,
+      default: () => [],
+    },
+
+    index: {
+      type: Number,
+      required: true,
+    },
+
+    parentIndex: {
+      type: [Number, String],
+      default: null,
+    },
+  },
+
+  setup(props) {
     const reportIndex = computed(() => {
-      const currentIndex = props.index;
-      const parentIndex = props.parentIndex;
-      return parentIndex ? `${parentIndex}.${currentIndex}` : currentIndex;
+      const { index, parentIndex } = props;
+      return parentIndex ? `${parentIndex}.${index}` : index;
     });
 
     return {
       reportIndex,
-      reportCols,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
+@import "../assets/styles/scss/_variables.scss";
+
+
 .report-wrapper {
   margin-bottom: 10px;
-  border-left: 5px solid deepskyblue;
+  border-left: 5px solid $blue-color;
 }
 
 .report {
   margin-bottom: 5px;
   width: 100%;
-  background: #3b3b3b;
+  background: $dark-color;
   color: white;
 
   overflow: hidden;
@@ -88,6 +104,7 @@ export default {
   width: 350px;
   text-align: left;
   padding: 5px;
+  -webkit-line-clamp: 4;
 }
 
 .hidden-reports {
