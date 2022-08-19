@@ -1,5 +1,11 @@
 <template>
-  <h2 v-if="cols.length === 0">Добавьте новые поля для вашей таблицы</h2>
+  <el-empty
+    v-if="cols.length === 0"
+    description="Добавьте новые поля для вашей таблицы"
+    :image-size="200"
+  >
+    <el-button type="primary" @click="addCol">Добавить поле</el-button>
+  </el-empty>
   <div class="config-table">
     <div class="config-table__cols">
       <col-field
@@ -7,7 +13,7 @@
         :key="index"
         :col="col"
         :index="index + 1"
-        @delete-col="pinia.deleteCol"
+        @delete-col="deleteCol"
         @change-col-title="pinia.changeColTitle"
         @change-col-name="pinia.changeColName"
       />
@@ -17,8 +23,12 @@
       <table-preview :cols="cols" />
     </div>
 
-    <div class="config-table__add-button">
-      <custom-button text="Добавить поле" @click="pinia.addCol" />
+    <div
+      class="config-table__add-button"
+      v-if="cols.length > 0"
+      @click="notifAdd"
+    >
+      <el-button type="primary" @click="addCol">Добавить поле</el-button>
     </div>
   </div>
 </template>
@@ -26,24 +36,45 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import ColField from "@/components/settings-table/ColField.vue";
-import CustomButton from "@/components/ui/CustomButton.vue";
 import TablePreview from "@/components/settings-table/TablePreview.vue";
 import useStore from "@/store";
-
+import { ElMessage } from "element-plus";
 export default defineComponent({
   name: "ConfigurationTable",
 
   components: {
     ColField,
-    CustomButton,
     TablePreview,
   },
 
   setup() {
     const pinia = useStore();
+
+    const addCol = () => {
+      pinia.addCol()
+      ElMessage({
+        showClose: true,
+        message: "Колонка добавлена",
+        type: "success",
+        grouping: true,
+      });
+    };
+
+    const deleteCol = (id: number | string) => {
+      pinia.deleteCol(id);
+      ElMessage({
+        showClose: true,
+        message: "Колонка удалена",
+        type: "error",
+        grouping: true,
+      });
+    };
+
     return {
       cols: computed(() => pinia.getCols),
       pinia,
+      addCol,
+      deleteCol,
     };
   },
 });

@@ -11,12 +11,20 @@ export const useStore = defineStore("main", {
           title: "Название",
           name: "title",
         },
+        {
+          id: 2 as string | number,
+          title: "Описание",
+          name: "description",
+        },
       ],
     },
+    reports: [],
   }),
 
   getters: {
     getCols: (state) => state.table.cols,
+
+    getReports: (state) => state.reports,
 
     getColsTitles: (state) =>
       state.table.cols.map((col: TableCol) => col.title),
@@ -53,6 +61,10 @@ export const useStore = defineStore("main", {
       if (col) {
         col.name = name;
       }
+    },
+
+    addReport(report: never) {
+      this.reports.push(report);
     },
   },
 });

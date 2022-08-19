@@ -20,23 +20,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {computed, defineComponent} from "vue";
 import ReportsTable from "@/components/ReportsTable.vue";
+import useStore from "@/store";
 export default defineComponent({
   components: {
     ReportsTable,
   },
 
   setup() {
+
+    const pinia = useStore();
+
     const reports = [
-      {
-        id: 1,
-        title: "Разиваем недоразвитость",
-        description:
-          "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-        childs: null,
-        status: "Принято",
-      },
+
       {
         id: 2,
         title: "Я родительский компонент",
@@ -45,39 +42,39 @@ export default defineComponent({
         childs: [
           {
             id: 3,
-            title: "Я дочерний компонент",
+            title: "Я дочерний компонент 1",
             description:
               "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
             childs: [
               {
                 id: 4,
-                title: "Разиваем недоразвитость",
+                title: "Разиваем недоразвитость 2",
                 description:
                   "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
                 childs: [
                   {
                     id: 5,
-                    title: "Разиваем недоразвитость",
+                    title: "Разиваем недоразвитость 3",
                     description:
                       "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
                     childs: null,
                   },
                   {
                     id: 6,
-                    title: "Разиваем недоразвитость",
+                    title: "Разиваем недоразвитость 4",
                     description:
                       "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
                     childs: [
                       {
                         id: 7,
-                        title: "Разиваем недоразвитость",
+                        title: "Разиваем недоразвитость 5",
                         description:
                           "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
                         childs: null,
                       },
                       {
                         id: 8,
-                        title: "Разиваем недоразвитость",
+                        title: "Разиваем недоразвитость 6",
                         description:
                           "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
                         childs: null,
@@ -89,7 +86,7 @@ export default defineComponent({
               },
               {
                 id: 9,
-                title: "Разиваем недоразвитость",
+                title: "Разиваем недоразвитость 8",
                 description:
                   "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
                 childs: null,
@@ -99,17 +96,10 @@ export default defineComponent({
         ],
       },
 
-      {
-        id: 10,
-        title: "Разиваем недоразвитость",
-        description:
-          "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-        childs: null,
-      },
     ];
 
     return {
-      reports,
+      reports: computed(() => reports),
     };
   },
 });

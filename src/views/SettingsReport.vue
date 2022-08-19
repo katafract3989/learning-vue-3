@@ -33,7 +33,8 @@ export default defineComponent({
 }
 
 .settings-body {
-  border: 1px solid grey;
+  border: 1px solid silver;
+  border-radius: 4px;
   width: 80%;
   padding: 20px;
 }

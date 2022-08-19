@@ -1,3 +1,4 @@
+@import "./_variables.scss";
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -28,4 +29,16 @@
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+}
+
+*::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+*::-webkit-scrollbar-track {
+  background: rgba(0, 191, 255, 0.44);        /* цвет дорожки */
+}
+*::-webkit-scrollbar-thumb {
+  background-color: $blue-color;    /* цвет плашки */
+  border-radius: 20px;       /* закругления плашки */
 }

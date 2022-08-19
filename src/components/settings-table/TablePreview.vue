@@ -7,9 +7,6 @@
       <tr>
         <td v-for="(col, indexTd) in cols" :key="indexTd">{{ col.name }}</td>
       </tr>
-      <tr v-for="(col, indexTr) in cols" :key="indexTr">
-        <td v-for="(col, indexTd) in cols" :key="indexTd"></td>
-      </tr>
     </table>
   </div>
 </template>
@@ -32,17 +29,12 @@ export default defineComponent({
 .preview-table {
   overflow-y: auto;
   max-width: 800px;
-
-  table {
-    background: deepskyblue;
-  }
+  border-bottom: 1px solid silver;
 
   table * {
-    color: white;
     margin: 0;
     padding: 5px;
     text-align: left;
-    border: 1px solid white;
   }
   th {
     min-width: 100px;
