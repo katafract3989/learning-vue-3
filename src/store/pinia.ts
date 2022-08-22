@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import _ from "lodash";
-import TableCol from "@/domain/types/TableCol";
+import { TableCol } from "@/domain/types/Table";
+import reports from "@/mock/reports.json";
 
 export const useStore = defineStore("main", {
   state: () => ({
@@ -18,7 +19,7 @@ export const useStore = defineStore("main", {
         },
       ],
     },
-    reports: [],
+    reports: [] as Array<Record<string, any>>,
   }),
 
   getters: {
@@ -63,8 +64,17 @@ export const useStore = defineStore("main", {
       }
     },
 
-    addReport(report: never) {
-      this.reports.push(report);
+    addReport(report: Record<string, any>, parentId: number | string | null) {
+      if (parentId === null) {
+        this.reports.push({
+          ...report.value,
+          id: _.uniqueId("new_report_"),
+          childs: [],
+          parentId: null,
+        });
+      } else {
+        // реализация поиска родителя и добавление отчёта как дочернего
+      }
     },
   },
 });

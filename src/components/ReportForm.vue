@@ -6,21 +6,43 @@
       </el-form-item>
     </el-form>
     <el-button type="success" @click="addReport">Добавить отчёт</el-button>
-    <pre>{{ reportForm }}</pre>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import useStore from "@/store";
+import { ElLoading } from "element-plus";
+
 export default defineComponent({
   name: "ReportForm",
 
-  setup() {
-    const pinia = useStore();
+  props: {
+    parentId: {
+      type: [String, Number],
+      default: 1,
+    },
+  },
 
+  setup(props) {
+    const pinia = useStore();
     const reportForm = ref({});
-    const addReport = () => pinia.addReport(reportForm);
+    const addReport = () => {
+      pinia.addReport(reportForm, props.parentId);
+      reportForm.value = {};
+      openLoader();
+    };
+
+    const openLoader = () => {
+      const loading = ElLoading.service({
+        lock: true,
+        background: "rgba(0, 0, 0, 0.7)",
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 500);
+    };
+
     return {
       cols: computed(() => pinia.getCols),
       reportForm,

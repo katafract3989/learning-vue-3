@@ -4,102 +4,66 @@
       <div class="reports__header">
         <h1>Ваши отчёты</h1>
         <router-link to="/settings-report">
-          <img
-            class="settings-icon"
-            src="@/assets/icon/svg/options.svg"
-            alt=""
-          />
+          <img class="settings-icon" src="@/assets/icon/svg/options.svg" />
         </router-link>
+        <el-button
+          type="success"
+          circle
+          @click="addModal(null)"
+          style="margin-left: 10px"
+        >
+          <el-icon style="vertical-align: middle">
+            <DocumentAdd />
+          </el-icon>
+        </el-button>
       </div>
-
       <div class="report-table">
-        <reports-table :reports="reports" />
+        <reports-table :reports="reports" @add-report="addModal" />
       </div>
     </div>
   </div>
+
+  <modal v-if="isShowModalAdd" title="Добавить отчёт" @hide-modal="hideModal">
+    <report-form :parent-id="parentId" />
+  </modal>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent} from "vue";
+import { computed, defineComponent, Ref, ref } from "vue";
 import ReportsTable from "@/components/ReportsTable.vue";
 import useStore from "@/store";
+import Modal from "@/components/ui/Modal.vue";
+import ReportForm from "@/components/ReportForm.vue";
+
 export default defineComponent({
   components: {
     ReportsTable,
+    Modal,
+    ReportForm,
   },
 
   setup() {
-
     const pinia = useStore();
 
-    const reports = [
+    let parentId: Ref<string | number | null> = ref(null);
 
-      {
-        id: 2,
-        title: "Я родительский компонент",
-        description:
-          "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-        childs: [
-          {
-            id: 3,
-            title: "Я дочерний компонент 1",
-            description:
-              "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-            childs: [
-              {
-                id: 4,
-                title: "Разиваем недоразвитость 2",
-                description:
-                  "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-                childs: [
-                  {
-                    id: 5,
-                    title: "Разиваем недоразвитость 3",
-                    description:
-                      "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-                    childs: null,
-                  },
-                  {
-                    id: 6,
-                    title: "Разиваем недоразвитость 4",
-                    description:
-                      "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-                    childs: [
-                      {
-                        id: 7,
-                        title: "Разиваем недоразвитость 5",
-                        description:
-                          "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-                        childs: null,
-                      },
-                      {
-                        id: 8,
-                        title: "Разиваем недоразвитость 6",
-                        description:
-                          "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-                        childs: null,
-                        actions: "Пёс бездомный",
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                id: 9,
-                title: "Разиваем недоразвитость 8",
-                description:
-                  "Опция setup должна быть функцией, которая принимает аргументами props и context (о которых подробнее поговорим дальше).",
-                childs: null,
-              },
-            ],
-          },
-        ],
-      },
+    let isShowModalAdd = ref(false);
+    const addModal = (id: number | string | null = null) => {
+      parentId.value = id;
+      isShowModalAdd.value = true;
+    };
 
-    ];
+    const hideModal = () => {
+      parentId.value = null;
+      isShowModalAdd.value = false;
+    };
 
     return {
-      reports: computed(() => reports),
+      reports: computed(() => pinia.getReports),
+      addModal,
+      hideModal,
+      isShowModalAdd,
+      parentId,
     };
   },
 });

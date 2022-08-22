@@ -27,6 +27,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { Delete } from "@element-plus/icons-vue";
+
 export default defineComponent({
   name: "ColField",
   components: {
@@ -46,8 +47,8 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
-    let title = ref(props.col.title);
-    let name = ref(props.col.name);
+    const title = ref(props.col.title);
+    const name = ref(props.col.name);
 
     const onInputTitle = (title: string) =>
       emit("change-col-title", props.col.id, title);

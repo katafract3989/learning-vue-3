@@ -1,28 +1,34 @@
 <template>
   <div>
-    <span @click="addModal">Добавить</span>
+    <el-empty
+      :image-size="400"
+      v-if="reports.length === 0"
+      description="Отчёты отсутствуют"
+    >
+      <el-button type="success" @click="addReport(null)">
+        Добавить отчёт
+      </el-button>
+    </el-empty>
 
-    <el-table :data="reports" style="width: 100%" :border="false">
+    <el-table v-else :data="reports" style="width: 100%" :border="false">
       <el-table-column type="expand">
         <template #default="report">
-          <div>
-            <h2 v-if="report.row.childs">
+          <div class="nested-reports" v-if="report.row.childs.length > 0">
+            <h2>
               Вложенные отчёты
-              <el-button type="success" circle @click="addModal">
+              <el-button type="success" circle @click="addReport(report.row.id)">
                 <el-icon style="vertical-align: middle">
                   <DocumentAdd />
                 </el-icon>
               </el-button>
             </h2>
-            <reports-table :reports="report.row.childs" />
-            <modal
-              v-if="isShowModalAdd"
-              :title="`Добавить к отчёту (${report.row.title})`"
-              @hide-modal="hideModal"
-            >
-              <report-form />
-            </modal>
+            <reports-table :reports="report.row.childs.length > 0" />
           </div>
+          <el-empty v-else description="Вложенные отчёты отсутствуют">
+            <el-button type="success" @click="addReport(report.row.id)">
+              Добавить дочерний отчёт
+            </el-button>
+          </el-empty>
         </template>
       </el-table-column>
 
@@ -34,49 +40,19 @@
       />
     </el-table>
   </div>
-
-  <!--  <div class="table">-->
-  <!--    <div class="table__head">-->
-  <!--      <div class="row">-->
-  <!--        <div class="col">#</div>-->
-  <!--        <div-->
-  <!--          class="col"-->
-  <!--          v-for="(title, indexTable) in colsTitles"-->
-  <!--          :key="indexTable"-->
-  <!--        >-->
-  <!--          {{ title }}-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--    <div class="table__body">-->
-  <!--      <div class="table__report">-->
-  <!--        <report-->
-  <!--          v-for="(report, index) in reports"-->
-  <!--          :key="index"-->
-  <!--          :report="report"-->
-  <!--          :index="index + 1"-->
-  <!--          :cols="colsNames"-->
-  <!--        />-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
-// import Report from "@/components/Report.vue";
+import { defineComponent, computed, ref } from "vue";
 import useStore from "@/store";
 import ReportsTable from "@/components/ReportsTable.vue";
-import Modal from "@/components/ui/Modal.vue";
-import ReportForm from "@/components/ReportForm.vue";
-export default defineComponent({
+
+const ReportsTableComp: any = defineComponent({
   name: "ReportsTable",
   components: {
-    // Report,
     ReportsTable,
-    Modal,
-    ReportForm,
   },
+
   props: {
     reports: {
       type: Array,
@@ -84,27 +60,23 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props, { emit }) {
     const pinia = useStore();
-    let isShowModalAdd = ref(false);
-    const addModal = () => {
-      isShowModalAdd.value = true;
-    };
 
-    const hideModal = () => {
-      isShowModalAdd.value = false;
+    const addReport = (parentId: number | string | null) => {
+      emit("add-report", parentId);
     };
 
     return {
       cols: computed(() => pinia.getCols),
       colsTitles: computed(() => pinia.getColsTitles),
       colsNames: computed(() => pinia.getColsNames),
-      addModal,
-      hideModal,
-      isShowModalAdd,
+      addReport,
     };
   },
 });
+
+export default ReportsTableComp;
 </script>
 
 <style lang="scss" scoped>
@@ -143,5 +115,9 @@ export default defineComponent({
     text-align: left;
     padding: 5px;
   }
+}
+
+.nested-reports {
+  margin-left: 20px;
 }
 </style>
