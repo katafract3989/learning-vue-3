@@ -47,11 +47,12 @@ export default defineComponent({
     TablePreview,
   },
 
-  setup() {
+  setup(props, context) {
+    console.log(context);
     const pinia = useStore();
 
     const addCol = () => {
-      pinia.addCol()
+      pinia.addCol();
       ElMessage({
         showClose: true,
         message: "Колонка добавлена",

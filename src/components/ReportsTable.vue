@@ -9,20 +9,26 @@
         Добавить отчёт
       </el-button>
     </el-empty>
-
     <el-table v-else :data="reports" style="width: 100%" :border="false">
       <el-table-column type="expand">
         <template #default="report">
           <div class="nested-reports" v-if="report.row.childs.length > 0">
             <h2>
               Вложенные отчёты
-              <el-button type="success" circle @click="addReport(report.row.id)">
+              <el-button
+                type="success"
+                circle
+                @click="addReport(report.row.id)"
+              >
                 <el-icon style="vertical-align: middle">
                   <DocumentAdd />
                 </el-icon>
               </el-button>
             </h2>
-            <reports-table :reports="report.row.childs.length > 0" />
+            <reports-table
+              :reports="report.row.childs"
+              @add-report="addReport"
+            />
           </div>
           <el-empty v-else description="Вложенные отчёты отсутствуют">
             <el-button type="success" @click="addReport(report.row.id)">
@@ -43,10 +49,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from "vue";
+import { defineComponent, computed } from "vue";
 import useStore from "@/store";
 import ReportsTable from "@/components/ReportsTable.vue";
-
+import { ParentId, Reports } from "@/domain/types/Table";
 const ReportsTableComp: any = defineComponent({
   name: "ReportsTable",
   components: {
@@ -56,16 +62,14 @@ const ReportsTableComp: any = defineComponent({
   props: {
     reports: {
       type: Array,
-      default: () => [],
+      default: () => [] as Reports,
     },
   },
 
   setup(props, { emit }) {
     const pinia = useStore();
 
-    const addReport = (parentId: number | string | null) => {
-      emit("add-report", parentId);
-    };
+    const addReport = (parentId: ParentId) => emit("add-report", parentId);
 
     return {
       cols: computed(() => pinia.getCols),

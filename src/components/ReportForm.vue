@@ -24,12 +24,13 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
+  setup(props, { emit }) {
     const pinia = useStore();
     const reportForm = ref({});
     const addReport = () => {
       pinia.addReport(reportForm, props.parentId);
       reportForm.value = {};
+      emit("hide-modal");
       openLoader();
     };
 
@@ -40,7 +41,7 @@ export default defineComponent({
       });
       setTimeout(() => {
         loading.close();
-      }, 500);
+      }, 300);
     };
 
     return {
@@ -52,4 +53,3 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>

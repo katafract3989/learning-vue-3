@@ -49,12 +49,28 @@ export default defineComponent({
   setup(props, { emit }) {
     const title = ref(props.col.title);
     const name = ref(props.col.name);
+    const stopWord = ["childs", "parentId"];
 
-    const onInputTitle = (title: string) =>
-      emit("change-col-title", props.col.id, title);
+    const onInputTitle = (title: string) => {
+      if (checkingStopWords(title)) {
+        emit("change-col-title", props.col.id, title);
+      }
+    };
 
-    const onInputName = (name: string) =>
-      emit("change-col-name", props.col.id, name);
+    const onInputName = (name: string) => {
+      if (checkingStopWords(name)) {
+        emit("change-col-name", props.col.id, name);
+      }
+    };
+
+    // TODO исправить на нормальную валидацию системных имён
+    const checkingStopWords = (text: string) => {
+      if (stopWord.includes(text)) {
+        alert("Данное имя занято системой");
+      } else {
+        return true;
+      }
+    };
 
     return {
       onInputTitle,

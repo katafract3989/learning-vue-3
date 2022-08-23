@@ -18,13 +18,13 @@
         </el-button>
       </div>
       <div class="report-table">
-        <reports-table :reports="reports" @add-report="addModal" />
+        <reports-table :reports="reports" @add-report="addModal"  />
       </div>
     </div>
   </div>
 
   <modal v-if="isShowModalAdd" title="Добавить отчёт" @hide-modal="hideModal">
-    <report-form :parent-id="parentId" />
+    <report-form :parent-id="parentId" @hide-modal="hideModal" />
   </modal>
 </template>
 
@@ -34,6 +34,7 @@ import ReportsTable from "@/components/ReportsTable.vue";
 import useStore from "@/store";
 import Modal from "@/components/ui/Modal.vue";
 import ReportForm from "@/components/ReportForm.vue";
+import { ParentId } from "@/domain/types/Table";
 
 export default defineComponent({
   components: {
@@ -45,10 +46,10 @@ export default defineComponent({
   setup() {
     const pinia = useStore();
 
-    let parentId: Ref<string | number | null> = ref(null);
+    let parentId: Ref<ParentId> = ref(null);
 
     let isShowModalAdd = ref(false);
-    const addModal = (id: number | string | null = null) => {
+    const addModal = (id: ParentId = null) => {
       parentId.value = id;
       isShowModalAdd.value = true;
     };

@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import _ from "lodash";
-import { TableCol } from "@/domain/types/Table";
-import reports from "@/mock/reports.json";
+import { TableCol, Reports, Report, ParentId } from "@/domain/types/Table";
 
 export const useStore = defineStore("main", {
   state: () => ({
@@ -19,7 +18,7 @@ export const useStore = defineStore("main", {
         },
       ],
     },
-    reports: [] as Array<Record<string, any>>,
+    reports: [] as Array<Report>,
   }),
 
   getters: {
@@ -64,17 +63,37 @@ export const useStore = defineStore("main", {
       }
     },
 
-    addReport(report: Record<string, any>, parentId: number | string | null) {
+    addReport(report: Report, parentId: ParentId) {
+      const newReport = {
+        ...report.value,
+        id: _.uniqueId("new_report_"),
+        childs: [] as Reports,
+        parentId: null as ParentId,
+      };
+
       if (parentId === null) {
-        this.reports.push({
-          ...report.value,
-          id: _.uniqueId("new_report_"),
-          childs: [],
-          parentId: null,
-        });
+        this.reports.push(newReport);
       } else {
-        // реализация поиска родителя и добавление отчёта как дочернего
+        const findParent = (reports: Reports) => {
+          _.forEach(reports, (parent: Report) => {
+            if (parent.id === parentId) {
+              newReport.parentId = parentId;
+              parent.childs.push(newReport);
+            } else if (parent.childs !== null) {
+              findParent(parent.childs);
+            }
+          });
+        };
+        findParent(this.reports);
       }
+    },
+
+    deleteReport(id: number | string) {
+      // реализация удаления репорта
+    },
+
+    editReport() {
+      // реализация изменение полей репорта
     },
   },
 });
