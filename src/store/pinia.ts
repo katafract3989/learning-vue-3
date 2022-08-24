@@ -79,7 +79,7 @@ export const useStore = defineStore("main", {
             if (parent.id === parentId) {
               newReport.parentId = parentId;
               parent.childs.push(newReport);
-            } else if (parent.childs !== null) {
+            } else if (parent.childs.length > 0) {
               findParent(parent.childs);
             }
           });
@@ -88,8 +88,17 @@ export const useStore = defineStore("main", {
       }
     },
 
-    deleteReport(id: number | string) {
-      // реализация удаления репорта
+    deleteReport(id: string | number) {
+      const findReport = (reports: Reports) => {
+        reports.forEach((report) => {
+          if (report.id === id) {
+            reports = reports.filter((item) => item.id !== id);
+          } else if (report.childs.length > 0) {
+            findReport(report.childs);
+          }
+        });
+      };
+      findReport(this.reports);
     },
 
     editReport() {

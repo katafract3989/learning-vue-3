@@ -44,6 +44,23 @@
         :label="col.title"
         :prop="col.name"
       />
+
+      <el-table-column
+        :data="reports"
+        fixed="right"
+        label="Действия"
+        width="120"
+      >
+        <template #default="report">
+          <el-button
+            link
+            type="danger"
+            size="small"
+            @click="pinia.deleteReport(report.row.id)"
+            >Удалить</el-button
+          >
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -76,6 +93,7 @@ const ReportsTableComp: any = defineComponent({
       colsTitles: computed(() => pinia.getColsTitles),
       colsNames: computed(() => pinia.getColsNames),
       addReport,
+      pinia,
     };
   },
 });

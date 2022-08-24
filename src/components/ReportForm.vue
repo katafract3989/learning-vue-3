@@ -20,7 +20,7 @@ export default defineComponent({
   props: {
     parentId: {
       type: [String, Number],
-      default: 1,
+      default: null,
     },
   },
 
