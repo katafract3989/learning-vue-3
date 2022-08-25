@@ -18,13 +18,17 @@
         </el-button>
       </div>
       <div class="report-table">
-        <reports-table :reports="reports" @add-report="addModal"  />
+        <reports-table
+          :reports="reports"
+          @add-report="addModal"
+          @edit-report="editReport"
+        />
       </div>
     </div>
   </div>
 
   <modal v-if="isShowModalAdd" title="Добавить отчёт" @hide-modal="hideModal">
-    <report-form :parent-id="parentId" @hide-modal="hideModal" />
+    <report-form :parent-id="parentId" :report-edit-id="reportEditId" @hide-modal="hideModal" />
   </modal>
 </template>
 
@@ -47,6 +51,7 @@ export default defineComponent({
     const pinia = useStore();
 
     let parentId: Ref<ParentId> = ref(null);
+    let reportEditId: Ref<number | string | null> = ref(null);
 
     let isShowModalAdd = ref(false);
     const addModal = (id: ParentId = null) => {
@@ -54,17 +59,25 @@ export default defineComponent({
       isShowModalAdd.value = true;
     };
 
+    const editReport = (id: number | string) => {
+      reportEditId.value = id;
+      isShowModalAdd.value = true;
+    };
+
     const hideModal = () => {
       parentId.value = null;
+      reportEditId.value = null;
       isShowModalAdd.value = false;
     };
 
     return {
       reports: computed(() => pinia.getReports),
       addModal,
+      editReport,
       hideModal,
       isShowModalAdd,
       parentId,
+      reportEditId,
     };
   },
 });

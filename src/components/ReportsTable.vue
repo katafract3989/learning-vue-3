@@ -28,6 +28,7 @@
             <reports-table
               :reports="report.row.childs"
               @add-report="addReport"
+              @edit-report="editReport"
             />
           </div>
           <el-empty v-else description="Вложенные отчёты отсутствуют">
@@ -54,9 +55,16 @@
         <template #default="report">
           <el-button
             link
+            type="warning"
+            size="small"
+            @click="editReport(report.row.id)"
+            >Изменить</el-button
+          >
+          <el-button
+            link
             type="danger"
             size="small"
-            @click="pinia.deleteReport(report.row.id)"
+            @click="deleteReport(report.row.id)"
             >Удалить</el-button
           >
         </template>
@@ -70,6 +78,7 @@ import { defineComponent, computed } from "vue";
 import useStore from "@/store";
 import ReportsTable from "@/components/ReportsTable.vue";
 import { ParentId, Reports } from "@/domain/types/Table";
+
 const ReportsTableComp: any = defineComponent({
   name: "ReportsTable",
   components: {
@@ -87,12 +96,16 @@ const ReportsTableComp: any = defineComponent({
     const pinia = useStore();
 
     const addReport = (parentId: ParentId) => emit("add-report", parentId);
+    const editReport = (id: string | number) => emit("edit-report", id);
+    const deleteReport = (id: string | number) => pinia.deleteReport(id);
 
     return {
       cols: computed(() => pinia.getCols),
       colsTitles: computed(() => pinia.getColsTitles),
       colsNames: computed(() => pinia.getColsNames),
       addReport,
+      editReport,
+      deleteReport,
       pinia,
     };
   },

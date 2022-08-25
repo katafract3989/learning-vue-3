@@ -33,6 +33,10 @@ export const useStore = defineStore("main", {
   },
 
   actions: {
+    saveCols(cols: Array<TableCol>) {
+      this.table.cols = cols;
+    },
+
     addCol() {
       const col: TableCol = {
         id: _.uniqueId("new_col_"),
@@ -79,6 +83,7 @@ export const useStore = defineStore("main", {
             if (parent.id === parentId) {
               newReport.parentId = parentId;
               parent.childs.push(newReport);
+              return;
             } else if (parent.childs.length > 0) {
               findParent(parent.childs);
             }
@@ -90,9 +95,10 @@ export const useStore = defineStore("main", {
 
     deleteReport(id: string | number) {
       const findReport = (reports: Reports) => {
-        reports.forEach((report) => {
+        _.forEach(reports, (report, index: number) => {
           if (report.id === id) {
-            reports = reports.filter((item) => item.id !== id);
+            reports.splice(index, 1);
+            return;
           } else if (report.childs.length > 0) {
             findReport(report.childs);
           }
@@ -101,8 +107,17 @@ export const useStore = defineStore("main", {
       findReport(this.reports);
     },
 
-    editReport() {
-      // реализация изменение полей репорта
+    editReport(newReport: Report, id: string | number) {
+      const findReport = (reports: Reports) => {
+        _.forEach(reports, (report, index) => {
+          if (report.id === id) {
+            reports[index] = newReport;
+          } else if (report.childs.length > 0) {
+            findReport(report.childs);
+          }
+        });
+      };
+      findReport(this.reports);
     },
   },
 });

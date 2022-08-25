@@ -2,10 +2,6 @@
   <div class="container">
     <div class="settings-table">
       <div class="settings-table__head">
-        <router-link to="/reports">
-          <el-button type="info">К отчётам</el-button>
-        </router-link>
-
         <h2>Настройки таблицы отчётов</h2>
       </div>
       <div class="settings-body">
