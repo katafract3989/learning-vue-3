@@ -4,7 +4,11 @@
       <div class="reports__header">
         <h1>Ваши отчёты</h1>
         <router-link to="/settings-report">
-          <img class="settings-icon" src="@/assets/icon/svg/options.svg" />
+          <img
+            class="settings-icon"
+            src="@/assets/icon/svg/options.svg"
+            alt="icon"
+          />
         </router-link>
         <el-button
           type="success"
@@ -28,7 +32,11 @@
   </div>
 
   <modal v-if="isShowModalAdd" title="Добавить отчёт" @hide-modal="hideModal">
-    <report-form :parent-id="parentId" :report-edit-id="reportEditId" @hide-modal="hideModal" />
+    <report-form
+      :parent-id="parentId"
+      :report-edit-id="reportEditId"
+      @hide-modal="hideModal"
+    />
   </modal>
 </template>
 
@@ -39,6 +47,7 @@ import useStore from "@/store";
 import Modal from "@/components/ui/Modal.vue";
 import ReportForm from "@/components/ReportForm.vue";
 import { ParentId } from "@/domain/types/Table";
+import _ from "lodash";
 
 export default defineComponent({
   components: {
@@ -71,7 +80,26 @@ export default defineComponent({
     };
 
     return {
-      reports: computed(() => pinia.getReports),
+      reports: computed(() => {
+        let reports = _.cloneDeep(pinia.getReports);
+
+        const recursivePassing = (list: any, parentIndex: ParentId = null) => {
+          list.forEach((item: any, index: number) => {
+            const currentIndex = index + 1;
+            item.index =
+              parentIndex !== null
+                ? `${parentIndex}.${currentIndex}`
+                : currentIndex;
+
+            if (item.childs.length > 0) {
+              recursivePassing(item.childs, item.index);
+            }
+          });
+        };
+        recursivePassing(reports);
+        return reports;
+      }),
+
       addModal,
       editReport,
       hideModal,

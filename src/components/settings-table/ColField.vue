@@ -1,8 +1,16 @@
 <template>
-  <div class="col-field" :style="{borderLeft: `5px solid ${isSort ? 'yellow' : 'deepskyblue'}`}">
-
+  <div
+    class="col-field"
+    :class="col.fixed ? 'col-field--fixed' : ''"
+    :style="{ borderLeft: `5px solid ${isSort ? 'yellow' : 'deepskyblue'}` }"
+  >
     <el-form-item label="Название колонки" class="col-field__input">
-      <el-input :disabled="isSort" label-width="150px" v-model="title" @input="onInputTitle" />
+      <el-input
+        :disabled="isSort"
+        label-width="150px"
+        v-model="title"
+        @input="onInputTitle"
+      />
     </el-form-item>
     <el-form-item label="Имя поля" class="col-field__input">
       <el-input :disabled="isSort" v-model="name" @input="onInputName" />
@@ -21,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { Delete, Grid } from "@element-plus/icons-vue";
 
 export default defineComponent({
@@ -65,7 +73,6 @@ export default defineComponent({
       }
     };
 
-    // TODO исправить на нормальную валидацию системных имён
     const checkingStopWords = (text: string) => {
       if (stopWord.includes(text)) {
         alert("Данное имя занято системой");
@@ -97,6 +104,10 @@ export default defineComponent({
   padding: 5px 10px;
   border: 1px solid rgba(191, 191, 191, 0.2);
 
+  &--fixed {
+    pointer-events: none;
+    opacity: 0.3;
+  }
 
   &__input {
     margin: 0 10px 0 0;

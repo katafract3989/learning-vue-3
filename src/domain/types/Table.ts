@@ -1,8 +1,8 @@
-
 export type TableCol = {
   id: number | string;
   title: string;
   name: string;
+  fixed?: boolean;
 };
 
 export type Reports = Array<Report>;

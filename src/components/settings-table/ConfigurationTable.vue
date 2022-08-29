@@ -12,6 +12,12 @@
         active-text="Сортировать"
         style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
       />
+      <el-switch
+        v-model="isNestingLevel"
+        class="ml-2"
+        active-text="Отображать уровень вложенности"
+        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+      />
     </div>
     <div class="config-table__cols" v-if="isSortCol">
       <draggable v-model="cols" group="cols" item-key="id">
@@ -39,10 +45,6 @@
         @change-col-name="changeName"
       />
     </div>
-
-    <!--    <div class="preview-table" v-if="cols.length > 0">-->
-    <!--      <table-preview :cols="cols" />-->
-    <!--    </div>-->
   </div>
   <div class="footer">
     <div class="footer__button">
@@ -66,9 +68,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import ColField from "@/components/settings-table/ColField.vue";
-// import TablePreview from "@/components/settings-table/TablePreview.vue";
 import useStore from "@/store";
 import { ElMessage } from "element-plus";
 import draggable from "vuedraggable";
@@ -80,7 +81,6 @@ export default defineComponent({
 
   components: {
     ColField,
-    // TablePreview,
     draggable,
   },
 
@@ -88,11 +88,13 @@ export default defineComponent({
     const pinia = useStore();
     const cols = ref(_.cloneDeep(pinia.getCols));
     let isSortCol = ref(false);
+    let isNestingLevel = ref(false);
     const addCol = () => {
       const col: TableCol = {
         id: _.uniqueId("new_col_"),
         title: "Новое поле",
         name: _.uniqueId("col_name_"),
+        fixed: false,
       };
       cols.value.push(col);
 
@@ -126,10 +128,24 @@ export default defineComponent({
       }
     };
 
+    watch(isNestingLevel, () => {
+      if (isNestingLevel.value) {
+        const col: TableCol = {
+          id: "col_nesting_level",
+          title: "#",
+          name: "index",
+          fixed: true,
+        };
+        cols.value.unshift(col);
+      } else {
+        cols.value = cols.value.filter((col) => col.id !== "col_nesting_level");
+      }
+    });
+
     const changeName = (id: number, name: string) => {
       const col = _.find(cols.value, (col) => col.id === id);
       if (col) {
-        col.title = name;
+        col.name = name;
       }
     };
 
@@ -146,6 +162,7 @@ export default defineComponent({
       changeName,
       checkChanges,
       isSortCol,
+      isNestingLevel,
     };
   },
 });
@@ -160,6 +177,7 @@ export default defineComponent({
 
   &__head {
     display: flex;
+    margin-bottom: 50px;
   }
 
   &__cols {

@@ -25,6 +25,7 @@
                 </el-icon>
               </el-button>
             </h2>
+
             <reports-table
               :reports="report.row.childs"
               @add-report="addReport"
@@ -38,7 +39,6 @@
           </el-empty>
         </template>
       </el-table-column>
-
       <el-table-column
         v-for="(col, indexTable) in cols"
         :key="indexTable"
@@ -77,7 +77,7 @@
 import { defineComponent, computed } from "vue";
 import useStore from "@/store";
 import ReportsTable from "@/components/ReportsTable.vue";
-import { ParentId, Reports } from "@/domain/types/Table";
+import { ParentId, Report, Reports } from "@/domain/types/Table";
 
 const ReportsTableComp: any = defineComponent({
   name: "ReportsTable",
