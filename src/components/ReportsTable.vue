@@ -13,24 +13,44 @@
       <el-table-column type="expand">
         <template #default="report">
           <div class="nested-reports" v-if="report.row.childs.length > 0">
-            <h2>
-              Вложенные отчёты
-              <el-button
-                type="success"
-                circle
-                @click="addReport(report.row.id)"
-              >
-                <el-icon style="vertical-align: middle">
-                  <DocumentAdd />
-                </el-icon>
-              </el-button>
-            </h2>
+            <div class="nested-reports__head">
+              <h2>
+                Вложенные отчёты
+                <el-button
+                  type="success"
+                  circle
+                  @click="addReport(report.row.id)"
+                >
+                  <el-icon style="vertical-align: middle">
+                    <DocumentAdd />
+                  </el-icon>
+                </el-button>
+
+                <el-button type="primary" @click="showSortModal">
+                  <el-icon style="vertical-align: middle">
+                    <Expand />
+                  </el-icon>
+                  Изменить порядок
+                </el-button>
+              </h2>
+            </div>
 
             <reports-table
               :reports="report.row.childs"
               @add-report="addReport"
               @edit-report="editReport"
             />
+            <el-dialog v-model="isShowSortModal" title="Shipping address">
+              <draggable v-model="report.row.childs" group="reports" item-key="id">
+                <div
+                  v-for="element in report.row.childs"
+                  :key="element.id"
+                  class="item"
+                >
+                  1
+                </div>
+              </draggable>
+            </el-dialog>
           </div>
           <el-empty v-else description="Вложенные отчёты отсутствуют">
             <el-button type="success" @click="addReport(report.row.id)">
@@ -40,7 +60,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-for="(col, indexTable) in cols"
+        v-for="(col, indexTable) in pinia.getCols"
         :key="indexTable"
         :label="col.title"
         :prop="col.name"
@@ -74,15 +94,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, ref } from "vue";
 import useStore from "@/store";
 import ReportsTable from "@/components/ReportsTable.vue";
-import { ParentId, Report, Reports } from "@/domain/types/Table";
+import { ParentId, Reports } from "@/domain/types/Table";
+import draggable from "vuedraggable";
 
 const ReportsTableComp: any = defineComponent({
   name: "ReportsTable",
   components: {
     ReportsTable,
+    draggable,
   },
 
   props: {
@@ -94,19 +116,20 @@ const ReportsTableComp: any = defineComponent({
 
   setup(props, { emit }) {
     const pinia = useStore();
-
+    const isShowSortModal = ref(false);
     const addReport = (parentId: ParentId) => emit("add-report", parentId);
     const editReport = (id: string | number) => emit("edit-report", id);
     const deleteReport = (id: string | number) => pinia.deleteReport(id);
-
+    const showSortModal = () => {
+      isShowSortModal.value = true;
+    };
     return {
-      cols: computed(() => pinia.getCols),
-      colsTitles: computed(() => pinia.getColsTitles),
-      colsNames: computed(() => pinia.getColsNames),
       addReport,
       editReport,
       deleteReport,
       pinia,
+      isShowSortModal,
+      showSortModal,
     };
   },
 });
@@ -154,5 +177,9 @@ export default ReportsTableComp;
 
 .nested-reports {
   margin-left: 20px;
+
+  &__head {
+    display: flex;
+  }
 }
 </style>

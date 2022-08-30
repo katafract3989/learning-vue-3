@@ -1,11 +1,17 @@
 import { defineStore } from "pinia";
-import _ from "lodash";
+import { uniqueId, forEach } from "lodash";
 import { TableCol, Reports, Report, ParentId } from "@/domain/types/Table";
 
 export const useStore = defineStore("main", {
   state: () => ({
     table: {
       cols: [
+        {
+          id: "col_nesting_level",
+          title: "#",
+          name: "index",
+          fixed: true,
+        },
         {
           id: 1 as string | number,
           title: "Название",
@@ -42,7 +48,7 @@ export const useStore = defineStore("main", {
     addReport(report: Report, parentId: ParentId) {
       const newReport = {
         ...report.value,
-        id: _.uniqueId("new_report_"),
+        id: uniqueId("new_report_"),
         childs: [] as Reports,
         parentId: null as ParentId,
       };
@@ -51,7 +57,7 @@ export const useStore = defineStore("main", {
         this.reports.push(newReport);
       } else {
         const findParent = (reports: Reports) => {
-          _.forEach(reports, (parent: Report) => {
+          forEach(reports, (parent: Report) => {
             if (parent.id === parentId) {
               newReport.parentId = parentId;
               parent.childs.push(newReport);
@@ -67,7 +73,7 @@ export const useStore = defineStore("main", {
 
     deleteReport(id: string | number) {
       const findReport = (reports: Reports) => {
-        _.forEach(reports, (report, index: number) => {
+        forEach(reports, (report, index: number) => {
           if (report && report.id === id) {
             reports.splice(index, 1);
             return;
@@ -81,7 +87,7 @@ export const useStore = defineStore("main", {
 
     editReport(newReport: Report, id: string | number) {
       const findReport = (reports: Reports) => {
-        _.forEach(reports, (report, index) => {
+        forEach(reports, (report, index) => {
           if (report.id === id) {
             reports[index] = newReport;
           } else if (report.childs.length > 0) {

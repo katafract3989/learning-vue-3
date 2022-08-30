@@ -14,6 +14,7 @@
     </el-form-item>
     <el-form-item label="Имя поля" class="col-field__input">
       <el-input :disabled="isSort" v-model="name" @input="onInputName" />
+      <small class="error-message">{{ errorNameMessage }}</small>
     </el-form-item>
     <div class="sort-icon" v-if="isSort">
       <el-icon>
@@ -29,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { Delete, Grid } from "@element-plus/icons-vue";
 
 export default defineComponent({
@@ -50,34 +51,37 @@ export default defineComponent({
       required: true,
     },
 
-    index: {
-      type: Number,
-      required: true,
+    reservedWords: {
+      type: Array,
+      default: () => [],
     },
   },
 
   setup(props, { emit }) {
     const title = ref(props.col.title);
     const name = ref(props.col.name);
-    const stopWord = ["childs", "parentId"];
-
+    let errorNameMessage = ref("");
     const onInputTitle = (title: string) => {
-      if (checkingStopWords(title)) {
+      if (title) {
         emit("change-col-title", props.col.id, title);
       }
     };
 
     const onInputName = (name: string) => {
-      if (checkingStopWords(name)) {
+      if (errorNameMessage.value) {
         emit("change-col-name", props.col.id, name);
       }
     };
 
-    const checkingStopWords = (text: string) => {
-      if (stopWord.includes(text)) {
-        alert("Данное имя занято системой");
+    watch(name, () => {
+      isNameValid();
+    });
+
+    const isNameValid = () => {
+      if (props.reservedWords.includes(name.value)) {
+        errorNameMessage.value = "Имя поля зарезервированно";
       } else {
-        return true;
+        errorNameMessage.value = "";
       }
     };
 
@@ -86,20 +90,24 @@ export default defineComponent({
       onInputName,
       name,
       title,
+      errorNameMessage,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
+.error-message {
+  color: red;
+  width: 200px;
+}
+
 .col-field {
   opacity: 1;
   margin-bottom: 7px;
   margin-right: 25px;
   display: flex;
-  align-items: center;
   background: white;
-  box-shadow: 2px 2px 4px 0 rgba(34, 60, 80, 0.2);
   animation: delayShow 0.2s;
   padding: 5px 10px;
   border: 1px solid rgba(191, 191, 191, 0.2);
@@ -110,7 +118,11 @@ export default defineComponent({
   }
 
   &__input {
-    margin: 0 10px 0 0;
+    margin: 5px 10px;
+    height: 50px;
+    display: flex;
+    align-items: flex-start;
+    width: 50%;
   }
 }
 

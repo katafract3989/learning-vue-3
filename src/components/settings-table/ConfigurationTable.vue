@@ -15,8 +15,12 @@
       <el-switch
         v-model="isNestingLevel"
         class="ml-2"
-        active-text="Отображать уровень вложенности"
-        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+        active-text="Уровень вложенности"
+        style="
+          --el-switch-on-color: #13ce66;
+          --el-switch-off-color: #ff4949;
+          margin-left: 10px;
+        "
       />
     </div>
     <div class="config-table__cols" v-if="isSortCol">
@@ -40,6 +44,7 @@
         :key="col.id"
         :col="col"
         :is-sort="isSortCol"
+        :reserved-words="reservedWords"
         @delete-col="deleteCol"
         @change-col-title="changeTitle"
         @change-col-name="changeName"
@@ -53,7 +58,7 @@
       </router-link>
     </div>
     <div class="footer__button">
-      <el-button :disabled="checkChanges" type="primary" @click="saveSettings"
+      <el-button type="primary" @click="saveSettings"
         >Сохранить</el-button
       >
     </div>
@@ -73,7 +78,7 @@ import ColField from "@/components/settings-table/ColField.vue";
 import useStore from "@/store";
 import { ElMessage } from "element-plus";
 import draggable from "vuedraggable";
-import _ from "lodash";
+import { cloneDeep, uniqueId, filter, find, isEqual } from "lodash";
 import { TableCol } from "@/domain/types/Table";
 
 export default defineComponent({
@@ -86,14 +91,16 @@ export default defineComponent({
 
   setup() {
     const pinia = useStore();
-    const cols = ref(_.cloneDeep(pinia.getCols));
+    const cols = ref(cloneDeep(pinia.getCols));
     let isSortCol = ref(false);
-    let isNestingLevel = ref(false);
+    let isNestingLevel = ref(true);
+    const reservedWords = ["childs", "parentId", "index"];
+
     const addCol = () => {
       const col: TableCol = {
-        id: _.uniqueId("new_col_"),
+        id: uniqueId("new_col_"),
         title: "Новое поле",
-        name: _.uniqueId("col_name_"),
+        name: uniqueId("col_name_"),
         fixed: false,
       };
       cols.value.push(col);
@@ -107,7 +114,7 @@ export default defineComponent({
     };
 
     const deleteCol = (id: number | string) => {
-      cols.value = _.filter(cols.value, (col) => col.id !== id);
+      cols.value = filter(cols.value, (col) => col.id !== id);
 
       ElMessage({
         showClose: true,
@@ -118,14 +125,25 @@ export default defineComponent({
     };
 
     const checkChanges = computed(() => {
-      return _.isEqual(cols.value, pinia.getCols);
+      return isEqual(cols.value, pinia.getCols);
     });
 
     const changeTitle = (id: number, title: string) => {
-      const col = _.find(cols.value, (col) => col.id === id);
+      const col = find(cols.value, (col) => col.id === id);
       if (col) {
         col.title = title;
       }
+    };
+
+    const changeName = (id: number, name: string) => {
+      const col = find(cols.value, (col) => col.id === id);
+      if (col) {
+        col.name = name;
+      }
+    };
+
+    const saveSettings = () => {
+      pinia.saveCols(cols.value);
     };
 
     watch(isNestingLevel, () => {
@@ -138,20 +156,12 @@ export default defineComponent({
         };
         cols.value.unshift(col);
       } else {
-        cols.value = cols.value.filter((col) => col.id !== "col_nesting_level");
+        cols.value = filter(
+          cols.value,
+          (col) => col.id !== "col_nesting_level"
+        );
       }
     });
-
-    const changeName = (id: number, name: string) => {
-      const col = _.find(cols.value, (col) => col.id === id);
-      if (col) {
-        col.name = name;
-      }
-    };
-
-    const saveSettings = () => {
-      pinia.saveCols(cols.value);
-    };
 
     return {
       cols,
@@ -163,6 +173,7 @@ export default defineComponent({
       checkChanges,
       isSortCol,
       isNestingLevel,
+      reservedWords,
     };
   },
 });
@@ -177,7 +188,7 @@ export default defineComponent({
 
   &__head {
     display: flex;
-    margin-bottom: 50px;
+    margin-bottom: 15px;
   }
 
   &__cols {
