@@ -88,8 +88,8 @@ export default defineComponent({
 
     return {
       cols: computed(() => pinia.getCols.filter((col) => !col.fixed)),
-      reportForm,
       saveReport,
+      reportForm,
     };
   },
 });

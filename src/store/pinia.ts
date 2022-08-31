@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { uniqueId, forEach } from "lodash";
+import { uniqueId, forEach, cloneDeep } from "lodash";
 import { TableCol, Reports, Report, ParentId } from "@/domain/types/Table";
 
 export const useStore = defineStore("main", {
@@ -13,13 +13,13 @@ export const useStore = defineStore("main", {
           fixed: true,
         },
         {
-          id: 1 as string | number,
+          id: "report-1",
           title: "Название",
           name: "title",
           fixed: false,
         },
         {
-          id: 2 as string | number,
+          id: "report-2",
           title: "Описание",
           name: "description",
           fixed: false,
@@ -48,7 +48,7 @@ export const useStore = defineStore("main", {
     addReport(report: Report, parentId: ParentId) {
       const newReport = {
         ...report.value,
-        id: uniqueId("new_report_"),
+        id: uniqueId("report-"),
         childs: [] as Reports,
         parentId: null as ParentId,
       };
@@ -96,6 +96,24 @@ export const useStore = defineStore("main", {
         });
       };
       findReport(this.reports);
+    },
+
+    async saveOrder(items: Reports, parentId: string | null) {
+      if (parentId === null) {
+        this.reports = items;
+      } else {
+        const findReport = (reports: Reports) => {
+          forEach(reports, (report) => {
+            if (report && report.id === parentId) {
+              report.childs = items;
+              return;
+            } else if (report && report.childs.length > 0) {
+              findReport(report.childs);
+            }
+          });
+        };
+        await findReport(this.reports);
+      }
     },
   },
 });

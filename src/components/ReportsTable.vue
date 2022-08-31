@@ -39,17 +39,14 @@
               :reports="report.row.childs"
               @add-report="addReport"
               @edit-report="editReport"
+              @save-order="saveOrder"
             />
-            <el-dialog v-model="isShowSortModal" title="Shipping address">
-              <draggable v-model="report.row.childs" group="reports" item-key="id">
-                <div
-                  v-for="element in report.row.childs"
-                  :key="element.id"
-                  class="item"
-                >
-                  1
-                </div>
-              </draggable>
+            <el-dialog v-model="isShowSortModal" title="Сортировка отчётов">
+              <report-sorter
+                :reports="report.row.childs"
+                :parent-id="report.row.id"
+                @save-order="saveOrder"
+              />
             </el-dialog>
           </div>
           <el-empty v-else description="Вложенные отчёты отсутствуют">
@@ -98,13 +95,13 @@ import { defineComponent, ref } from "vue";
 import useStore from "@/store";
 import ReportsTable from "@/components/ReportsTable.vue";
 import { ParentId, Reports } from "@/domain/types/Table";
-import draggable from "vuedraggable";
+import ReportSorter from "@/components/ReportSorter.vue";
 
 const ReportsTableComp: any = defineComponent({
   name: "ReportsTable",
   components: {
     ReportsTable,
-    draggable,
+    ReportSorter,
   },
 
   props: {
@@ -120,16 +117,21 @@ const ReportsTableComp: any = defineComponent({
     const addReport = (parentId: ParentId) => emit("add-report", parentId);
     const editReport = (id: string | number) => emit("edit-report", id);
     const deleteReport = (id: string | number) => pinia.deleteReport(id);
-    const showSortModal = () => {
-      isShowSortModal.value = true;
+    const showSortModal = () => (isShowSortModal.value = true);
+    const hideSortModal = () => (isShowSortModal.value = false);
+    const saveOrder = (items: Reports, parentId: string | null) => {
+      hideSortModal();
+      emit("save-order", items, parentId);
     };
+
     return {
       addReport,
       editReport,
       deleteReport,
+      showSortModal,
+      saveOrder,
       pinia,
       isShowSortModal,
-      showSortModal,
     };
   },
 });
@@ -139,41 +141,6 @@ export default ReportsTableComp;
 
 <style lang="scss" scoped>
 @import "../assets/styles/scss/_variables.scss";
-
-.table {
-  width: 100%;
-  border: $border-grey;
-  padding: 32px;
-  min-height: 600px;
-
-  &__head {
-    border-bottom: $border-grey;
-    margin-bottom: 20px;
-    padding-left: 5px;
-    min-width: 100%;
-  }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__footer {
-    margin: 10px;
-  }
-
-  .row {
-    display: flex;
-    min-width: 100%;
-    justify-content: space-between;
-  }
-
-  .col {
-    width: 350px;
-    text-align: left;
-    padding: 5px;
-  }
-}
 
 .nested-reports {
   margin-left: 20px;

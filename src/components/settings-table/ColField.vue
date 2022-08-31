@@ -61,6 +61,7 @@ export default defineComponent({
     const title = ref(props.col.title);
     const name = ref(props.col.name);
     let errorNameMessage = ref("");
+
     const onInputTitle = (title: string) => {
       if (title) {
         emit("change-col-title", props.col.id, title);
@@ -68,14 +69,12 @@ export default defineComponent({
     };
 
     const onInputName = (name: string) => {
-      if (errorNameMessage.value) {
+      if (errorNameMessage.value.length === 0) {
         emit("change-col-name", props.col.id, name);
       }
     };
 
-    watch(name, () => {
-      isNameValid();
-    });
+    watch(name, () => isNameValid());
 
     const isNameValid = () => {
       if (props.reservedWords.includes(name.value)) {

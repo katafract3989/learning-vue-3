@@ -5,8 +5,8 @@ export type TableCol = {
   fixed?: boolean;
 };
 
-export type Reports = Array<Report>;
+export type Reports = Report[];
 
-export type Report = Record<string, any>; // Todo расширить
+export type Report = Record<string, any>;
 
 export type ParentId = number | string | null;

@@ -53,14 +53,12 @@
   </div>
   <div class="footer">
     <div class="footer__button">
-      <router-link to="/reports">
+      <router-link to="/">
         <el-button type="info">К отчётам</el-button>
       </router-link>
     </div>
     <div class="footer__button">
-      <el-button type="primary" @click="saveSettings"
-        >Сохранить</el-button
-      >
+      <el-button type="primary" @click="saveSettings">Сохранить</el-button>
     </div>
     <div class="footer__button">
       <el-button type="success" :disabled="isSortCol" @click="addCol" circle>
@@ -73,12 +71,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import ColField from "@/components/settings-table/ColField.vue";
 import useStore from "@/store";
 import { ElMessage } from "element-plus";
 import draggable from "vuedraggable";
-import { cloneDeep, uniqueId, filter, find, isEqual } from "lodash";
+import { cloneDeep, uniqueId, filter, find } from "lodash";
 import { TableCol } from "@/domain/types/Table";
 
 export default defineComponent({
@@ -92,9 +90,9 @@ export default defineComponent({
   setup() {
     const pinia = useStore();
     const cols = ref(cloneDeep(pinia.getCols));
+    const reservedWords = ["childs", "parentId", "index"];
     let isSortCol = ref(false);
     let isNestingLevel = ref(true);
-    const reservedWords = ["childs", "parentId", "index"];
 
     const addCol = () => {
       const col: TableCol = {
@@ -124,10 +122,6 @@ export default defineComponent({
       });
     };
 
-    const checkChanges = computed(() => {
-      return isEqual(cols.value, pinia.getCols);
-    });
-
     const changeTitle = (id: number, title: string) => {
       const col = find(cols.value, (col) => col.id === id);
       if (col) {
@@ -142,9 +136,7 @@ export default defineComponent({
       }
     };
 
-    const saveSettings = () => {
-      pinia.saveCols(cols.value);
-    };
+    const saveSettings = () => pinia.saveCols(cols.value);
 
     watch(isNestingLevel, () => {
       if (isNestingLevel.value) {
@@ -164,16 +156,15 @@ export default defineComponent({
     });
 
     return {
-      cols,
       addCol,
       deleteCol,
       saveSettings,
       changeTitle,
       changeName,
-      checkChanges,
       isSortCol,
       isNestingLevel,
       reservedWords,
+      cols,
     };
   },
 });
@@ -201,10 +192,6 @@ export default defineComponent({
     margin: 30px 0;
     width: 100%;
   }
-}
-
-.preview-table {
-  margin-left: 10px;
 }
 
 .footer {
