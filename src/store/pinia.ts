@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { uniqueId, forEach, cloneDeep } from "lodash";
+import { uniqueId } from "lodash";
 import { TableCol, Reports, Report, ParentId } from "@/domain/types/Table";
 
 export const useStore = defineStore("main", {
@@ -49,7 +49,7 @@ export const useStore = defineStore("main", {
       const newReport = {
         ...report.value,
         id: uniqueId("report-"),
-        childs: [] as Reports,
+        children: [] as Reports,
         parentId: null as ParentId,
       };
 
@@ -57,13 +57,13 @@ export const useStore = defineStore("main", {
         this.reports.push(newReport);
       } else {
         const findParent = (reports: Reports) => {
-          forEach(reports, (parent: Report) => {
+          reports.forEach((parent: Report) => {
             if (parent.id === parentId) {
               newReport.parentId = parentId;
-              parent.childs.push(newReport);
+              parent.children.push(newReport);
               return;
-            } else if (parent.childs.length > 0) {
-              findParent(parent.childs);
+            } else if (parent?.children?.length > 0) {
+              findParent(parent.children);
             }
           });
         };
@@ -73,12 +73,12 @@ export const useStore = defineStore("main", {
 
     deleteReport(id: string | number) {
       const findReport = (reports: Reports) => {
-        forEach(reports, (report, index: number) => {
+        reports.forEach((report, index: number) => {
           if (report && report.id === id) {
             reports.splice(index, 1);
             return;
-          } else if (report && report.childs.length > 0) {
-            findReport(report.childs);
+          } else if (report?.children?.length > 0) {
+            findReport(report.children);
           }
         });
       };
@@ -87,11 +87,11 @@ export const useStore = defineStore("main", {
 
     editReport(newReport: Report, id: string | number) {
       const findReport = (reports: Reports) => {
-        forEach(reports, (report, index) => {
+        reports.forEach((report, index) => {
           if (report.id === id) {
             reports[index] = newReport;
-          } else if (report.childs.length > 0) {
-            findReport(report.childs);
+          } else if (report?.children?.length > 0) {
+            findReport(report.children);
           }
         });
       };
@@ -103,12 +103,12 @@ export const useStore = defineStore("main", {
         this.reports = items;
       } else {
         const findReport = (reports: Reports) => {
-          forEach(reports, (report) => {
-            if (report && report.id === parentId) {
-              report.childs = items;
+          reports.forEach((report) => {
+            if (report?.id === parentId) {
+              report.children = items;
               return;
-            } else if (report && report.childs.length > 0) {
-              findReport(report.childs);
+            } else if (report?.children?.length > 0) {
+              findReport(report.children);
             }
           });
         };

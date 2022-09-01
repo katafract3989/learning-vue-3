@@ -53,9 +53,7 @@ export default defineComponent({
   setup(props, { emit }) {
     let items = ref(props.reports);
 
-    const saveOrder = () => {
-      emit("save-order", items.value, props.parentId);
-    };
+    const saveOrder = () => emit("save-order", items.value, props.parentId);
 
     return {
       saveOrder,

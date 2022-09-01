@@ -76,7 +76,7 @@ import ColField from "@/components/settings-table/ColField.vue";
 import useStore from "@/store";
 import { ElMessage } from "element-plus";
 import draggable from "vuedraggable";
-import { cloneDeep, uniqueId, filter, find } from "lodash";
+import { cloneDeep, uniqueId } from "lodash";
 import { TableCol } from "@/domain/types/Table";
 
 export default defineComponent({
@@ -90,7 +90,7 @@ export default defineComponent({
   setup() {
     const pinia = useStore();
     const cols = ref(cloneDeep(pinia.getCols));
-    const reservedWords = ["childs", "parentId", "index"];
+    const reservedWords = ["children", "parentId", "index"];
     let isSortCol = ref(false);
     let isNestingLevel = ref(true);
 
@@ -112,7 +112,7 @@ export default defineComponent({
     };
 
     const deleteCol = (id: number | string) => {
-      cols.value = filter(cols.value, (col) => col.id !== id);
+      cols.value = cols.value.filter((col) => col.id !== id);
 
       ElMessage({
         showClose: true,
@@ -123,14 +123,14 @@ export default defineComponent({
     };
 
     const changeTitle = (id: number, title: string) => {
-      const col = find(cols.value, (col) => col.id === id);
+      const col = cols.value.find((col) => col.id === id);
       if (col) {
         col.title = title;
       }
     };
 
     const changeName = (id: number, name: string) => {
-      const col = find(cols.value, (col) => col.id === id);
+      const col = cols.value.find((col) => col.id === id);
       if (col) {
         col.name = name;
       }
@@ -148,10 +148,7 @@ export default defineComponent({
         };
         cols.value.unshift(col);
       } else {
-        cols.value = filter(
-          cols.value,
-          (col) => col.id !== "col_nesting_level"
-        );
+        cols.value = cols.value.filter((col) => col.id !== "col_nesting_level");
       }
     });
 

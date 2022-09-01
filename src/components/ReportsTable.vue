@@ -12,7 +12,7 @@
     <el-table v-else :data="reports" style="width: 100%" :border="false">
       <el-table-column type="expand">
         <template #default="report">
-          <div class="nested-reports" v-if="report.row.childs.length > 0">
+          <div class="nested-reports" v-if="report.row.children.length > 0">
             <div class="nested-reports__head">
               <h2>
                 Вложенные отчёты
@@ -36,14 +36,14 @@
             </div>
 
             <reports-table
-              :reports="report.row.childs"
+              :reports="report.row.children"
               @add-report="addReport"
               @edit-report="editReport"
               @save-order="saveOrder"
             />
             <el-dialog v-model="isShowSortModal" title="Сортировка отчётов">
               <report-sorter
-                :reports="report.row.childs"
+                :reports="report.row.children"
                 :parent-id="report.row.id"
                 @save-order="saveOrder"
               />

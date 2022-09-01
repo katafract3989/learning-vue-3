@@ -28,7 +28,7 @@ import { computed, defineComponent, ref } from "vue";
 import useStore from "@/store";
 import { ElLoading } from "element-plus";
 import { onMounted } from "vue";
-import { forEach, cloneDeep } from "lodash";
+import { cloneDeep } from "lodash";
 import { Reports } from "@/domain/types/Table";
 import { Operation } from "@element-plus/icons-vue";
 export default defineComponent({
@@ -65,12 +65,12 @@ export default defineComponent({
     onMounted(() => findReport(pinia.getReports, props.reportEditId));
 
     const findReport = (reports: Reports, id: string | number | null) => {
-      forEach(reports, (report) => {
+      reports.forEach((report) => {
         if (report.id === id) {
           reportForm.value = cloneDeep(report);
           return;
-        } else if (report.childs.length > 0) {
-          findReport(report.childs, id);
+        } else if (report.children.length > 0) {
+          findReport(report.children, id);
         }
       });
     };

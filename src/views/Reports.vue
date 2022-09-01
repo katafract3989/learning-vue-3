@@ -124,8 +124,8 @@ export default defineComponent({
               ? `${parentIndex}.${currentIndex}`
               : currentIndex;
 
-          if (item.childs.length > 0) {
-            recursivePassing(item.childs, item.index);
+          if (item.children.length > 0) {
+            recursivePassing(item.children, item.index);
           }
         });
       };
